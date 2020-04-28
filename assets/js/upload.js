@@ -1,6 +1,6 @@
 export const Upload = csrf => ({
   mounted() {
-    this.el.addEventListener('drop', (e) => {
+    this.el.addEventListener('drop', e => {
       e.preventDefault();
       e.stopImmediatePropagation();
       const dir = this.el.dataset.cwd;

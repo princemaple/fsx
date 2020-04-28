@@ -54,6 +54,12 @@ defmodule FsxWeb.PageLive do
     {:noreply, assign(socket, ls: ls(socket.assigns.cwd))}
   end
 
+  @impl true
+  def handle_event("new_folder", %{"name" => name}, socket) do
+    File.mkdir(socket.assigns.cwd |> Path.join() |> Path.join(name))
+    {:noreply, assign(socket, ls: ls(socket.assigns.cwd))}
+  end
+
   defp ls(path_segments) do
     ls =
       (path_segments ++ ["*"])

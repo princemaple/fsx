@@ -5,6 +5,7 @@
     <span class="text"><%= folder %></span>
   </div>
   <% end %>
+  <%= live_component(@socket, FsxWeb.NewFolderComponent, id: NewFolderComponent, cwd: Path.join(@cwd)) %>
 </div>
 
 <div class="files">
