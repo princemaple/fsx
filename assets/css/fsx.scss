@@ -1,0 +1,57 @@
+html,
+body {
+  margin: 0;
+}
+
+body {
+  display: flex;
+  place-content: center;
+}
+
+[data-phx-main],
+main {
+  width: 60vw;
+  min-width: 480px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.text {
+  color: #000;
+}
+
+.folders,
+.files {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1em;
+}
+
+.folder,
+.file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1em;
+}
+
+.folder {
+  color: hsl(0, 46%, 42%);
+}
+
+.folder[data-selected=true] {
+  color: #f44;
+}
+
+.file {
+  color: #9a9;
+}
+
+.file[data-selected=true] {
+  color: #6c6;
+}
+
+.file.upload {
+  border-radius: 8px;
+  border: 2px dashed #9a9;
+}
