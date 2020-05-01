@@ -25,6 +25,7 @@ main {
   display: inline-block;
   padding: 1px;
   color: #fff;
+  cursor: pointer;
 }
 
 .bread-crumb:not(:last-of-type)::after {
