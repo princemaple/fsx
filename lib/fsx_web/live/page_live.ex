@@ -1,12 +1,11 @@
 defmodule FsxWeb.PageLive do
   use FsxWeb, :live_view
 
-  @goto_parent_icon "⮌"
+  @goto_parent "⮌"
 
   @impl true
   def mount(_params, _session, socket) do
-    cwd = File.cwd!() |> Path.split()
-    {:ok, assign(socket, selected: nil, cwd: cwd, root: cwd, vsn: 0)}
+    {:ok, assign(socket, selected: nil, cwd: ["/"], root: File.cwd!(), vsn: 0)}
   end
 
   @impl true
@@ -22,7 +21,7 @@ defmodule FsxWeb.PageLive do
       ) do
     cwd =
       case selection do
-        @goto_parent_icon ->
+        @goto_parent ->
           {_folder, cwd} = List.pop_at(cwd, -1)
           cwd
 
@@ -37,12 +36,23 @@ defmodule FsxWeb.PageLive do
   end
 
   @impl true
+  def handle_event("goto", %{"path" => path}, socket) do
+    cwd = path |> String.split("@@") |> Enum.reverse()
+
+    {:noreply, assign(socket, cwd: cwd, selected: nil)}
+  end
+
+  @impl true
   def handle_event(
         "select",
         %{"selection" => selection},
-        %{assigns: %{selected: selection, cwd: cwd}} = socket
+        %{assigns: %{selected: selection, cwd: cwd, root: root}} = socket
       ) do
-    uri = %URI{path: "/download", query: URI.encode_query(path: Path.join(cwd ++ [selection]))}
+    uri = %URI{
+      path: "/download",
+      query: URI.encode_query(path: Path.join(root, Path.join(cwd ++ [selection])))
+    }
+
     {:noreply, redirect(socket, external: URI.to_string(uri))}
   end
 
@@ -53,18 +63,22 @@ defmodule FsxWeb.PageLive do
 
   @impl true
   def handle_event("refresh", _params, socket) do
-    {:noreply, update(socket, :vsn, & &1 + 1)}
+    {:noreply, update(socket, :vsn, &(&1 + 1))}
   end
 
   @impl true
-  def handle_event("new_folder", %{"name" => name}, socket) do
-    File.mkdir(socket.assigns.cwd |> Path.join() |> Path.join(name))
-    {:noreply, update(socket, :vsn, & &1 + 1)}
+  def handle_event("new_folder", %{"name" => name}, %{assigns: %{cwd: cwd, root: root}} = socket) do
+    File.mkdir!(Path.join(root, socket.assigns.cwd |> Path.join() |> Path.join(name)))
+    {:noreply, update(socket, :vsn, &(&1 + 1))}
   end
 
   @impl true
-  def handle_event("keypress", %{"key" => "Delete", "ctrlKey" => true, "shiftKey" => shift}, socket) do
-    path = socket.assigns.cwd |> Path.join() |> Path.join(socket.assigns.selected)
+  def handle_event(
+        "keypress",
+        %{"key" => "Backspace", "ctrlKey" => true, "shiftKey" => shift},
+        %{assigns: %{cwd: cwd, root: root, selected: selected}} = socket
+      ) do
+    path = Path.join(root, cwd |> Path.join() |> Path.join(selected))
 
     cond do
       File.dir?(path) and shift -> File.rm_rf!(path)
@@ -72,7 +86,7 @@ defmodule FsxWeb.PageLive do
       File.regular?(path) -> File.rm!(path)
     end
 
-    {:noreply, update(socket, :vsn, & &1 + 1)}
+    {:noreply, update(socket, :vsn, &(&1 + 1))}
   end
 
   @impl true

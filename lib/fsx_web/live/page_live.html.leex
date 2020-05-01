@@ -1,7 +1,7 @@
 <div phx-window-keyup="keypress">
   <div class="bread-crumbs">
-    <%= for x <- @cwd do %>
-    <span class="bread-crumb"><%= x %></span>
+    <%= for {x, path} <- Enum.zip(@cwd, Enum.scan(@cwd, [], &[&1 | &2])) do %>
+    <span class="bread-crumb" phx-click="goto" phx-value-path="<%= Enum.join(path, "@@") %>"><%= x %></span>
     <% end %>
   </div>
   <%= live_component @socket, FsxWeb.LsComponent,
