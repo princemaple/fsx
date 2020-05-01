@@ -15,5 +15,5 @@
     <span class="text"><%= file %></span>
   </div>
   <% end %>
-  <%= live_component(@socket, FsxWeb.UploadLive, id: UploadLive, cwd: Path.join(@cwd)) %>
+  <%= live_component(@socket, FsxWeb.UploadComponent, id: UploadLive, cwd: Path.join(@cwd)) %>
 </div>
