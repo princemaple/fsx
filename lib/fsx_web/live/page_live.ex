@@ -9,7 +9,7 @@ defmodule FsxWeb.PageLive do
     {:ok, assign(socket, ls: ls(cwd), selected: nil, cwd: cwd)}
   end
 
-  @impl
+  @impl true
   def handle_params(_params, _uri, socket) do
     {:noreply, socket}
   end
