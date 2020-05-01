@@ -62,6 +62,21 @@ defmodule FsxWeb.PageLive do
     {:noreply, update(socket, :vsn, & &1 + 1)}
   end
 
+  @impl true
+  def handle_event("keypress", %{"key" => "Delete", "ctrlKey" => true, "shiftKey" => shift}, socket) do
+    path = socket.assigns.cwd |> Path.join() |> Path.join(socket.assigns.selected)
 
+    cond do
+      File.dir?(path) and shift -> File.rm_rf!(path)
+      File.dir?(path) -> File.rmdir!(path)
+      File.regular?(path) -> File.rm!(path)
+    end
+
+    {:noreply, update(socket, :vsn, & &1 + 1)}
+  end
+
+  @impl true
+  def handle_event("keypress", _params, socket) do
+    {:noreply, socket}
   end
 end
