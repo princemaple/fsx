@@ -6,7 +6,7 @@ defmodule FsxWeb.PageLive do
   @impl true
   def mount(_params, _session, socket) do
     cwd = File.cwd!() |> Path.split()
-    {:ok, assign(socket, selected: nil, cwd: cwd, root: cwd)}
+    {:ok, assign(socket, selected: nil, cwd: cwd, root: cwd, vsn: 0)}
   end
 
   @impl true
@@ -53,13 +53,13 @@ defmodule FsxWeb.PageLive do
 
   @impl true
   def handle_event("refresh", _params, socket) do
-    {:noreply, socket}
+    {:noreply, update(socket, :vsn, & &1 + 1)}
   end
 
   @impl true
   def handle_event("new_folder", %{"name" => name}, socket) do
     File.mkdir(socket.assigns.cwd |> Path.join() |> Path.join(name))
-    {:noreply, socket}
+    {:noreply, update(socket, :vsn, & &1 + 1)}
   end
 
 

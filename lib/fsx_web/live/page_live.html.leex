@@ -4,5 +4,6 @@
     <span class="bread-crumb"><%= x %></span>
     <% end %>
   </div>
-  <%= live_component @socket, FsxWeb.LsComponent, id: "ls", cwd: @cwd, root: @root, selected: @selected %>
+  <%= live_component @socket, FsxWeb.LsComponent,
+    id: "ls", vsn: @vsn, cwd: @cwd, root: @root, selected: @selected %>
 </div>
