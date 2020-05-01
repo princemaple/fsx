@@ -39,7 +39,7 @@ defmodule FsxWeb.Router do
 
     scope "/" do
       pipe_through :browser
-      live_dashboard "/dashboard", metrics: FsxWeb.Telemetry
+      live_dashboard "/dash", metrics: FsxWeb.Telemetry
     end
   end
 end
