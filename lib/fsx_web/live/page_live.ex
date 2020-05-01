@@ -6,7 +6,7 @@ defmodule FsxWeb.PageLive do
   @impl true
   def mount(_params, _session, socket) do
     cwd = File.cwd!() |> Path.split()
-    {:ok, assign(socket, ls: ls(cwd), selected: nil, cwd: cwd)}
+    {:ok, assign(socket, selected: nil, cwd: cwd, root: cwd)}
   end
 
   @impl true
@@ -31,7 +31,9 @@ defmodule FsxWeb.PageLive do
       end
 
     {:noreply,
-     socket |> assign(selected: nil, cwd: cwd, ls: ls(cwd)) |> push_patch(to: "/explore")}
+     socket
+     |> assign(selected: nil, cwd: cwd)
+     |> push_patch(to: "/explore")}
   end
 
   @impl true
@@ -51,26 +53,15 @@ defmodule FsxWeb.PageLive do
 
   @impl true
   def handle_event("refresh", _params, socket) do
-    {:noreply, assign(socket, ls: ls(socket.assigns.cwd))}
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("new_folder", %{"name" => name}, socket) do
     File.mkdir(socket.assigns.cwd |> Path.join() |> Path.join(name))
-    {:noreply, assign(socket, ls: ls(socket.assigns.cwd))}
+    {:noreply, socket}
   end
 
-  defp ls(path_segments) do
-    ls =
-      (path_segments ++ ["*"])
-      |> Path.join()
-      |> Path.wildcard()
-      |> Enum.map(fn x -> {File.dir?(x), Path.basename(x)} end)
 
-    if length(path_segments) > 1 do
-      [{true, @goto_parent_icon} | ls]
-    else
-      ls
-    end
   end
 end

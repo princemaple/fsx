@@ -16,6 +16,21 @@ main {
   overflow-y: auto;
 }
 
+.bread-crumbs {
+  background-color: #bb7;
+  padding: 4px 1em;
+}
+
+.bread-crumb {
+  display: inline-block;
+  padding: 1px;
+  color: #fff;
+}
+
+.bread-crumb:not(:last-of-type)::after {
+  content: " >";
+}
+
 .text {
   color: #000;
 }
