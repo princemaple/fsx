@@ -18,7 +18,7 @@ export const Upload = csrf => ({
       });
 
       for (let f of forms) {
-        f.then(() => this.pushEvent('refresh'))
+        f.then(() => this.pushEventTo('#ls', 'refresh'))
       }
     });
 

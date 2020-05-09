@@ -3,7 +3,7 @@ export const NewFolder = {
     this.el.addEventListener('click', e => {
       const name = prompt('folder name');
       if (name) {
-        this.pushEvent('new_folder', {name});
+        this.pushEventTo('#new-folder', 'new_folder', {name});
       }
     })
   }
