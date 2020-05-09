@@ -68,7 +68,7 @@ defmodule FsxWeb.PageLive do
 
   @impl true
   def handle_event("new_folder", %{"name" => name}, %{assigns: %{cwd: cwd, root: root}} = socket) do
-    File.mkdir!(Path.join(root, socket.assigns.cwd |> Path.join() |> Path.join(name)))
+    File.mkdir!(Path.join(root, cwd |> Path.join() |> Path.join(name)))
     {:noreply, update(socket, :vsn, &(&1 + 1))}
   end
 
