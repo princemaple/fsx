@@ -67,10 +67,57 @@ defmodule FsxWeb.LsComponent do
   @impl true
   def handle_event(
         "select",
-        %{"selection" => selection, "index" => index},
+        %{"index" => index, "shiftKey" => true},
+        %{
+          assigns: %{
+            ls: %{files: files, folders: folders},
+            selected_is_folder: is_folder,
+            selected_index: selected_index,
+            selected: selected
+          }
+        } = socket
+      ) do
+    items =
+      if is_folder do
+        folders
+      else
+        files
+      end
+
+    index = String.to_integer(index)
+
+    range =
+      if index < selected_index do
+        index..selected_index
+      else
+        selected_index..index
+      end
+
+    new_selected =
+      items
+      |> Enum.with_index()
+      |> Enum.filter(fn {_, i} -> i in range end)
+      |> Enum.map(fn {x, _} -> x end)
+
+    {:noreply,
+     assign(socket,
+       selected: Enum.uniq(new_selected ++ selected),
+       selected_index: index
+     )}
+  end
+
+  @impl true
+  def handle_event(
+        "select",
+        %{"selection" => selection, "folder" => is_folder, "index" => index},
         socket
       ) do
-    {:noreply, assign(socket, selected: [selection], selected_index: index)}
+    {:noreply,
+     assign(socket,
+       selected: [selection],
+       selected_is_folder: is_folder == "true",
+       selected_index: String.to_integer(index)
+     )}
   end
 
   @impl true
