@@ -1,4 +1,4 @@
-<div id="ls" class="folders">
+<div id="ls" class="folders" phx-window-keyup="keypress" phx-target="#ls">
   <%= for {folder, index} <- Enum.with_index(@ls.folders) do %>
   <div class="folder"
       data-selected="<%= @selected && folder in @selected %>"

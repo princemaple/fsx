@@ -1,8 +1,6 @@
 defmodule FsxWeb.PageLive do
   use FsxWeb, :live_view
 
-  @goto_parent "⮌"
-
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
@@ -27,26 +25,7 @@ defmodule FsxWeb.PageLive do
   end
 
   @impl true
-  def handle_event(
-        "keypress",
-        %{"key" => "Backspace", "ctrlKey" => true, "shiftKey" => shift},
-        %{assigns: %{cwd: cwd, root: root, selected: selected}} = socket
-      ) do
-    path = Path.join(root, cwd |> Path.join() |> Path.join(selected))
-
-    cond do
-      File.dir?(path) and shift -> File.rm_rf!(path)
-      File.dir?(path) -> File.rmdir!(path)
-      File.regular?(path) -> File.rm!(path)
-    end
-
-    send_update(FsxWeb.LsComponent, id: "ls", refresh: true)
-
-    {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("keypress", _params, socket) do
-    {:noreply, socket}
+  def handle_info({:update_cwd, cwd}, socket) do
+    {:noreply, assign(socket, cwd: cwd)}
   end
 end
